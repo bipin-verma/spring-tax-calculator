@@ -1,10 +1,10 @@
 # Spring Tax Calculator
 
-Spring Tax Calculator is a compact Java 17 project that demonstrates XML-based dependency injection with Spring and basic tax calculation logic for income tax and property tax.
+Spring Tax Calculator is a compact Java 17 project that demonstrates XML-based dependency injection with Spring and tax calculation logic for income tax and property tax. The current `main` branch represents `v2`, which adds an interactive console workflow on top of the original `v1` demo.
 
 ## GitHub Metadata
 
-- Suggested repository description: `V1 of a Java 17 Spring project demonstrating XML-based dependency injection, interface-driven design, and basic income/property tax calculation.`
+- Suggested repository description: `V2 of a Java 17 Spring project demonstrating XML-based dependency injection, interactive console flow, and basic income/property tax calculation.`
 - Suggested topics: `java`, `java-17`, `spring-framework`, `maven`, `xml-configuration`, `dependency-injection`, `junit5`, `oop`, `console-application`, `tax-calculator`, `learning-project`
 
 ## Tech Stack
@@ -16,40 +16,45 @@ Spring Tax Calculator is a compact Java 17 project that demonstrates XML-based d
 
 ## Project Overview
 
-This `v1` version focuses on a simple contract-driven design:
+This version keeps the same contract-driven tax model from `v1` and extends it with a simple menu-based user interaction flow:
 
 - `Tax` defines the common behavior for tax implementations.
 - `IncomeTax` calculates tax using simplified slab-based logic.
 - `PropertyTax` calculates tax as 5% of the property value.
 - `applicationContext.xml` wires both implementations as Spring beans.
-- `TaxApplication` loads the Spring context, uses each bean, prints the calculated amount, and marks the tax as paid.
+- `TaxConsoleWorkflow` drives a menu where the user selects a tax type, enters the taxable amount, reviews the result, and optionally pays it.
 
 ## Current Flow
 
 1. The application starts in `TaxApplication`.
 2. Spring loads `applicationContext.xml`.
-3. The context creates `incomeTax` and `propertyTax` beans.
-4. The application sets taxable amounts for both beans.
-5. Each implementation calculates its tax amount.
-6. The application prints the tax amount and calls `payTax()`.
-7. The bean marks the tax as paid for the current runtime instance.
+3. The console workflow shows a menu for income tax, property tax, or exit.
+4. The user selects a tax type.
+5. The application asks for the taxable amount.
+6. The selected implementation calculates the tax amount.
+7. The application shows the amount and asks whether to pay it.
+8. The user can continue with another tax flow or exit the application.
 
 ## Flow Diagram
 
 ```mermaid
 flowchart TD
     A["Start: TaxApplication.main()"] --> B["Load Spring XML context<br/>applicationContext.xml"]
-    B --> C["Create beans:<br/>incomeTax and propertyTax"]
-    C --> D["Fetch incomeTax bean"]
-    D --> E["Set taxable income"]
-    E --> F["Calculate income tax"]
-    F --> G["Print income tax amount"]
-    G --> H["Call payTax()"]
-    H --> I["Fetch propertyTax bean"]
-    I --> J["Set property value"]
-    J --> K["Calculate property tax"]
-    K --> L["Print property tax amount"]
-    L --> M["Call payTax()"]
+    B --> C["Show tax selection menu"]
+    C --> D{"User choice"}
+    D -->|"1"| E["Load incomeTax bean"]
+    D -->|"2"| F["Load propertyTax bean"]
+    D -->|"3"| M["Exit application"]
+    D -->|"Invalid"| C
+    E --> G["Enter taxable amount"]
+    F --> G
+    G --> H["Calculate selected tax"]
+    H --> I["Show tax amount"]
+    I --> J{"Pay tax?"}
+    J -->|"yes"| K["Call payTax()"]
+    J -->|"no"| L["Cancel payment"]
+    K --> C
+    L --> C
     M --> N["Close context and end"]
 ```
 
@@ -66,10 +71,16 @@ If you prefer the Maven Wrapper, use `mvnw.cmd` on Windows or `./mvnw` on Unix-l
 ## Sample Output
 
 ```text
-Income Tax Amount: 180000.0
+Welcome to the Tax Payment Application
+Please select which tax you want to pay:
+1. Income
+2. Property
+3. Exit
+Selected Tax Type: income
+Enter the taxable amount:
+Tax Amount: 180000.0
 Hi, your income tax is paid.
-Property Tax Amount: 250000.0
-Hi, your property tax is paid.
+Exiting...
 ```
 
 ## Known Limitations
@@ -77,12 +88,13 @@ Hi, your property tax is paid.
 - Income tax currently uses simplified slab logic, meaning one rate is applied to the full amount in a bracket.
 - The project is a console-based demonstration and does not expose a REST API.
 - Tax payment state is stored only in memory and is reset each time the application starts.
-- There is no persistence layer or external data source in `v1`.
+- Because Spring beans are singleton-scoped by default, payment state persists during one runtime session for each tax bean.
+- There is no persistence layer or external data source in `v2`.
 
 ## Future Versions Roadmap
 
-- `v1`: XML bean wiring and console-based tax calculation demo.
-- `v2`: planned enhancement built on top of the current codebase.
+- `v1`: fixed demo run using XML bean wiring and hardcoded taxable amounts. Tagged as `v1.0.0`.
+- `v2`: interactive console-based tax selection, calculation, and optional payment flow.
 - `v3`: planned enhancement that continues the same project history.
 
 ## Why This Repo Exists
