@@ -43,8 +43,12 @@ public class TaxConsoleWorkflow {
                 continue;
             }
 
-            System.out.println("Selected Tax Type: " + tax.getTaxType());
-            System.out.println("Enter the taxable amount:");
+            if (tax.isTaxPayed()) {
+                System.out.println("You have already paid " + tax.getTaxType() + " tax.");
+                continue;
+            }
+
+            System.out.println("Please enter your " + tax.getTaxType() + " value:");
 
             String amountInput = readLine();
             Integer taxableAmount = parseInteger(amountInput);
@@ -56,14 +60,24 @@ public class TaxConsoleWorkflow {
             tax.setTaxableAmount(taxableAmount);
             tax.calculateTaxAmount();
 
-            System.out.println("Tax Amount: " + tax.getTaxAmount());
-            System.out.println("Do you want to pay this tax? (yes/no)");
+            System.out.println("You have selected " + tax.getTaxType() + " tax and your tax amount is: " + tax.getTaxAmount());
+            System.out.println("Do you want to pay the tax?");
+            System.out.println("1. Yes");
+            System.out.println("2. No");
 
-            String payChoice = readLine();
-            if ("yes".equalsIgnoreCase(payChoice)) {
+            String payChoiceInput = readLine();
+            Integer payChoice = parseInteger(payChoiceInput);
+            if (payChoice == null) {
+                System.out.println("Invalid input. Please enter a number.");
+                continue;
+            }
+
+            if (payChoice == 1) {
                 tax.payTax();
+            } else if (payChoice == 2) {
+                System.out.println("Tax payment cancelled.");
             } else {
-                System.out.println("Tax payment canceled.");
+                System.out.println("Invalid choice. Please try again.");
             }
         }
     }

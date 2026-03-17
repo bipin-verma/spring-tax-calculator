@@ -16,14 +16,14 @@ class TaxConsoleWorkflowTest {
         try (ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml")) {
             TaxConsoleWorkflow workflow = new TaxConsoleWorkflow(
                     context,
-                    scannerFor("1", "1200000", "yes", "3")
+                    scannerFor("1", "1200000", "1", "3")
             );
 
             String output = TaxConsoleTestSupport.captureOutput(workflow::run);
 
             assertTrue(output.contains("Welcome to the Tax Payment Application"));
-            assertTrue(output.contains("Selected Tax Type: income"));
-            assertTrue(output.contains("Tax Amount: 180000.0"));
+            assertTrue(output.contains("Please enter your income value:"));
+            assertTrue(output.contains("You have selected income tax and your tax amount is: 180000.0"));
             assertTrue(output.contains("Hi, your income tax is paid."));
             assertTrue(output.contains("Exiting..."));
         }
@@ -34,15 +34,31 @@ class TaxConsoleWorkflowTest {
         try (ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml")) {
             TaxConsoleWorkflow workflow = new TaxConsoleWorkflow(
                     context,
-                    scannerFor("9", "2", "5000000", "no", "3")
+                    scannerFor("9", "2", "5000000", "2", "3")
             );
 
             String output = TaxConsoleTestSupport.captureOutput(workflow::run);
 
             assertTrue(output.contains("Invalid choice. Please try again."));
-            assertTrue(output.contains("Selected Tax Type: property"));
-            assertTrue(output.contains("Tax Amount: 250000.0"));
-            assertTrue(output.contains("Tax payment canceled."));
+            assertTrue(output.contains("Please enter your property value:"));
+            assertTrue(output.contains("You have selected property tax and your tax amount is: 250000.0"));
+            assertTrue(output.contains("Tax payment cancelled."));
+            assertTrue(output.contains("Exiting..."));
+        }
+    }
+
+    @Test
+    void preventsPayingTheSameTaxTwiceInOneSession() {
+        try (ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("applicationContext.xml")) {
+            TaxConsoleWorkflow workflow = new TaxConsoleWorkflow(
+                    context,
+                    scannerFor("1", "1200000", "1", "1", "3")
+            );
+
+            String output = TaxConsoleTestSupport.captureOutput(workflow::run);
+
+            assertTrue(output.contains("Hi, your income tax is paid."));
+            assertTrue(output.contains("You have already paid income tax."));
             assertTrue(output.contains("Exiting..."));
         }
     }
