@@ -2,6 +2,11 @@
 
 Spring Tax Calculator is a compact Java 17 project that demonstrates XML-based dependency injection with Spring and basic tax calculation logic for income tax and property tax.
 
+## GitHub Metadata
+
+- Suggested repository description: `V1 of a Java 17 Spring project demonstrating XML-based dependency injection, interface-driven design, and basic income/property tax calculation.`
+- Suggested topics: `java`, `java-17`, `spring-framework`, `maven`, `xml-configuration`, `dependency-injection`, `junit5`, `oop`, `console-application`, `tax-calculator`, `learning-project`
+
 ## Tech Stack
 
 - Java 17
@@ -28,6 +33,25 @@ This `v1` version focuses on a simple contract-driven design:
 5. Each implementation calculates its tax amount.
 6. The application prints the tax amount and calls `payTax()`.
 7. The bean marks the tax as paid for the current runtime instance.
+
+## Flow Diagram
+
+```mermaid
+flowchart TD
+    A["Start: TaxApplication.main()"] --> B["Load Spring XML context<br/>applicationContext.xml"]
+    B --> C["Create beans:<br/>incomeTax and propertyTax"]
+    C --> D["Fetch incomeTax bean"]
+    D --> E["Set taxable income"]
+    E --> F["Calculate income tax"]
+    F --> G["Print income tax amount"]
+    G --> H["Call payTax()"]
+    H --> I["Fetch propertyTax bean"]
+    I --> J["Set property value"]
+    J --> K["Calculate property tax"]
+    K --> L["Print property tax amount"]
+    L --> M["Call payTax()"]
+    M --> N["Close context and end"]
+```
 
 ## How To Run
 
